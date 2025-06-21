@@ -1,7 +1,6 @@
-name: PHP CI with Codacy
+name: PHP CI with Codacy Coverage
 
 on:
-  workflow_dispatch:
   push:
     branches: [ master ]
   pull_request:
@@ -10,45 +9,57 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php: ['8.3'] # 可扩展为 ['7.4', '8.0', '8.1', '8.2', '8.3']
+    name: PHP 8.3
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout master branch
+        uses: actions/checkout@v3
+        with:
+          ref: master
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: '8.3'
           coverage: xdebug
           tools: composer:v2
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            vendor
-            ~/.composer/cache
-          key: php-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
-
-      - name: Update Composer
-        run: composer self-update
+      - name: Configure Xdebug for coverage
+        run: |
+          echo "XDEBUG_MODE=coverage" >> $GITHUB_ENV
+          
+          # 验证 Xdebug 配置
+          echo "Xdebug version: $(php -r 'echo phpversion("xdebug");')"
+          echo "Xdebug modes: $(php -r 'echo ini_get("xdebug.mode");')"
 
       - name: Install dependencies
         run: composer update --no-interaction --dev
 
+      - name: Prepare directories
+        run: mkdir -p build/logs .phpunit.cache
+
       - name: Run tests with coverage
-        run: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+        run: |
+          vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml
+          
+          if [ ! -f build/logs/clover.xml ]; then
+            echo "❌ Coverage file not generated!"
+            exit 1
+          fi
+          
+          head -n 20 build/logs/clover.xml
 
-      - name: Run tests without coverage
-        run: vendor/bin/phpunit
-
-      - name: Upload to Codacy
-        if: success() && matrix.php == '8.3' && github.ref == 'refs/heads/main'
+      - name: Upload coverage to Codacy
+        if: success() && github.ref == 'refs/heads/master'
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
         run: |
           curl -Ls https://coverage.codacy.com/get.sh > codacy-reporter
           chmod +x codacy-reporter
           ./codacy-reporter report -r build/logs/clover.xml
+          
+          # 验证上传结果
+          if [ $? -ne 0 ]; then
+            echo "❌ Failed to upload coverage to Codacy"
+            exit 1
+          fi

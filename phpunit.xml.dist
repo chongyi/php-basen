@@ -14,19 +14,16 @@
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
-
-    <!-- 替换 filter 为 coverage 配置 -->
-    <coverage cacheDirectory=".phpunit.cache/code-coverage"
-              processUncoveredFiles="true">
+    <source>
         <include>
-            <directory suffix=".php">./src</directory>
+            <directory>./src</directory>
         </include>
+    </source>
+    <coverage>
         <report>
             <clover outputFile="build/logs/clover.xml"/>
         </report>
     </coverage>
-
-    <!-- PHP 配置 -->
     <php>
         <ini name="error_reporting" value="-1"/>
         <ini name="display_errors" value="1"/>
