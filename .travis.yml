@@ -3,8 +3,7 @@ language: php
 sudo: false
 
 php:
-  - 7.1
-  - 7.2
+  - 8.3
 
 matrix:
   fast_finish: true
@@ -18,4 +17,4 @@ script:
   - vendor/bin/phpunit
 
 after_success:
-  - php vendor/bin/codacycoverage clover build/logs/clover.xml
+  - bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r build/logs/clover.xml

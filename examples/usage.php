@@ -7,8 +7,8 @@
 
 include_once __DIR__ . '/../vendor/autoload.php';
 
-use xobotyi\basen\Base58;
-use xobotyi\basen\BaseN;
+use PHPBaseN\Base58;
+use PHPBaseN\BaseN;
 
 // use it for something usual
 $base8 = new BaseN('01234567', false, false, false);

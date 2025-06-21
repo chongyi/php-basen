@@ -5,23 +5,23 @@
  * @License: http://www.opensource.org/licenses/mit-license.php
  */
 
-namespace xobotyi\basen;
+namespace PHPBaseN;
 
 class Base62
 {
-    public const ALPHABET          = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    public const ALPHABET_INVERTED = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    public const string ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    public const string ALPHABET_INVERTED = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
-    public const ALPHABETS = [
+    public const array ALPHABETS = [
         self::ALPHABET,
         self::ALPHABET_INVERTED,
     ];
 
     use Traits\Encoder;
 
-    private static function getBaseConverter() :BaseN {
+    private static function getBaseConverter(): BaseN
+    {
         return self::$converter
-            ? self::$converter
-            : self::$converter = new BaseN(self::ALPHABET, true);
+            ?: self::$converter = new BaseN(self::ALPHABET, true);
     }
 }

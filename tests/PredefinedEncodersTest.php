@@ -5,10 +5,10 @@
  * @License: http://www.opensource.org/licenses/mit-license.php
  */
 
-namespace xobotyi\basen;
+namespace PHPBaseN;
 
 use PHPUnit\Framework\TestCase;
-use xobotyi\basen\Traits\Encoder;
+use PHPBaseN\Traits\Encoder;
 
 class PredefinedEncodersTest extends TestCase
 {

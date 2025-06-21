@@ -5,116 +5,136 @@
  * @License: http://www.opensource.org/licenses/mit-license.php
  */
 
-namespace xobotyi\basen;
+namespace PHPBaseN;
+
+use InvalidArgumentException;
 
 class BaseN
 {
-    protected const LCM = [1 => 1, 2 => 1, 3 => 3, 4 => 1, 5 => 5, 6 => 3, 7 => 7, 8 => 1];
+    protected const array LCM = [1 => 1, 2 => 1, 3 => 3, 4 => 1, 5 => 5, 6 => 3, 7 => 7, 8 => 1];
 
-    protected $alphabet;
-    protected $alphabetMap;
-    protected $bitsPerCharacter;
-    protected $caseSensitive;
-    protected $padCharacter;
-    protected $padFinalBits;
-    protected $padFinalGroup;
-    protected $radix;
-    protected $roughEncoding;
+    protected ?string $alphabet = null;
+    protected ?array $alphabetMap;
+    protected ?int $bitsPerCharacter = null;
+    protected bool $caseSensitive;
+    protected bool $padFinalBits;
+    protected bool $padFinalGroup = false;
+    protected ?int $radix = null;
+    protected ?int $roughEncoding = null;
+    protected ?string $padCharacter = null;
 
-    public function __construct(string $alphabet, bool $caseSensitive = true, bool $padFinalBits = false, bool $padFinalGroup = false, string $padCharacter = '=') {
+    public function __construct(
+        string $alphabet,
+        bool $caseSensitive = true,
+        bool $padFinalBits = false,
+        bool $padFinalGroup = false,
+        string $padCharacter = '='
+    ) {
         $this->setCaseSensitive($caseSensitive)
-             ->setAlphabet($alphabet)
-             ->setPadCharacter($padCharacter)
-             ->setPadFinalBits($padFinalBits)
-             ->setPadFinalGroup($padFinalGroup);
+            ->setAlphabet($alphabet)
+            ->setPadCharacter($padCharacter)
+            ->setPadFinalBits($padFinalBits)
+            ->setPadFinalGroup($padFinalGroup);
     }
 
-    public function getAlphabet() :string {
+    public function getAlphabet(): string
+    {
         return $this->alphabet;
     }
 
-    public function setAlphabet(string $alphabet) :self {
+    public function setAlphabet(string $alphabet): self
+    {
         if ($alphabet === $this->alphabet) {
             return $this;
         }
 
         $alphabetLength = strlen($alphabet);
         if ($alphabetLength < 2) {
-            throw new \InvalidArgumentException('alphabet must contain at least 2 characters');
+            throw new InvalidArgumentException('alphabet must contain at least 2 characters');
         }
 
         # determine how much bits per character will we need
         $bitsPerCharacter = 1;
-        $radix            = 2;
+        $radix = 2;
 
         while ($bitsPerCharacter < 8 && $alphabetLength > $radix && ($radix <<= 1)) {
             $bitsPerCharacter++;
         }
 
         if ($bitsPerCharacter === 8) {
-            throw new \InvalidArgumentException('given alphabet requires more than 8 bits peer character which is maximal');
+            throw new InvalidArgumentException('given alphabet requires more than 8 bits peer character which is maximal');
         }
 
         $radix = $alphabetLength;
 
-        $this->alphabet         = $alphabet;
-        $this->alphabetMap      = null;
+        $this->alphabet = $alphabet;
+        $this->alphabetMap = null;
         $this->bitsPerCharacter = $bitsPerCharacter;
-        $this->radix            = $radix;
-        $this->roughEncoding    = $radix < 2 << $bitsPerCharacter - 1;
+        $this->radix = $radix;
+        $this->roughEncoding = $radix < 2 << $bitsPerCharacter - 1;
 
         return $this;
     }
 
-    public function isCaseSensitive() :bool {
+    public function isCaseSensitive(): bool
+    {
         return $this->caseSensitive;
     }
 
-    public function setCaseSensitive(bool $caseSensitive) :self {
+    public function setCaseSensitive(bool $caseSensitive): self
+    {
         $this->caseSensitive = $caseSensitive;
 
         return $this;
     }
 
-    public function isPaddingFinalBits() :bool {
+    public function isPaddingFinalBits(): bool
+    {
         return $this->padFinalBits;
     }
 
-    public function isPaddingFinalGroup() :bool {
+    public function isPaddingFinalGroup(): bool
+    {
         return $this->padFinalGroup;
     }
 
-    public function setPadFinalBits(bool $padFinalBits) :self {
+    public function setPadFinalBits(bool $padFinalBits): self
+    {
         $this->padFinalBits = $padFinalBits;
 
         return $this;
     }
 
-    public function setPadFinalGroup(bool $padFinalGroup) :self {
-        if($this->padFinalGroup = $padFinalGroup){
-            if ($this->padFinalGroup && ($this->caseSensitive ? strpos($this->alphabet, $this->padCharacter) : stripos($this->alphabet, $this->padCharacter)) !== false) {
-                throw new \InvalidArgumentException('pad character can not be a member of alphabet');
+    public function setPadFinalGroup(bool $padFinalGroup): self
+    {
+        if ($this->padFinalGroup = $padFinalGroup) {
+            if ($this->padFinalGroup && ($this->caseSensitive ? strpos($this->alphabet,
+                    $this->padCharacter) : stripos($this->alphabet, $this->padCharacter)) !== false) {
+                throw new InvalidArgumentException('pad character can not be a member of alphabet');
             }
         }
 
         return $this;
     }
 
-    public function getPadCharacter() :string {
+    public function getPadCharacter(): string
+    {
         return $this->padCharacter;
     }
 
-    public function setPadCharacter(string $padCharacter) :self {
+    public function setPadCharacter(string $padCharacter): self
+    {
         if ($padCharacter === $this->padCharacter) {
             return $this;
         }
 
         if (strlen($padCharacter) !== 1) {
-            throw new \InvalidArgumentException('pad character must be a single character string');
+            throw new InvalidArgumentException('pad character must be a single character string');
         }
 
-        if ($this->padFinalGroup && ($this->caseSensitive ? strpos($this->alphabet, $padCharacter) : stripos($this->alphabet, $padCharacter)) !== false) {
-            throw new \InvalidArgumentException('pad character can not be a member of alphabet');
+        if ($this->padFinalGroup && ($this->caseSensitive ? strpos($this->alphabet,
+                $padCharacter) : stripos($this->alphabet, $padCharacter)) !== false) {
+            throw new InvalidArgumentException('pad character can not be a member of alphabet');
         }
 
         $this->padCharacter = $padCharacter;
@@ -122,7 +142,8 @@ class BaseN
         return $this;
     }
 
-    public function encode(string $rawString) :string {
+    public function encode(string $rawString): string
+    {
         if (!$rawString) {
             return '';
         }
@@ -138,7 +159,7 @@ class BaseN
         $charsPerByte = 8 / $this->bitsPerCharacter;
         $resultLength = count($rawBytes) * $charsPerByte;
 
-        $byte     = array_shift($rawBytes);
+        $byte = array_shift($rawBytes);
         $bitsRead = 0;
 
         for ($i = 0; $i < $resultLength; $i++) {
@@ -146,7 +167,7 @@ class BaseN
                 # not enough space for character in current byte
                 # storing remaining bits before process next byte
                 $overflowBitsCount = 8 - $bitsRead;
-                $overflowBits      = $byte ^ ($byte >> $overflowBitsCount << $overflowBitsCount);
+                $overflowBits = $byte ^ ($byte >> $overflowBitsCount << $overflowBitsCount);
 
                 $storeBitsCount = $this->bitsPerCharacter - $overflowBitsCount;
 
@@ -159,7 +180,7 @@ class BaseN
                     $result .= $this->alphabet[$overflowBits];
 
                     if ($this->padFinalGroup) {
-                        $pads   = self::LCM[$this->bitsPerCharacter] * $charsPerByte - ceil(strlen($rawString) % self::LCM[$this->bitsPerCharacter] * $charsPerByte);
+                        $pads = self::LCM[$this->bitsPerCharacter] * $charsPerByte - ceil(strlen($rawString) % self::LCM[$this->bitsPerCharacter] * $charsPerByte);
                         $result .= str_repeat($this->padCharacter, $pads);
                     }
 
@@ -168,11 +189,10 @@ class BaseN
                 }
 
                 # get nex byte
-                $byte     = array_shift($rawBytes);
+                $byte = array_shift($rawBytes);
                 $bitsRead = 0;
-            }
-            else {
-                $overflowBits      = 0;
+            } else {
+                $overflowBits = 0;
                 $overflowBitsCount = 0;
 
                 $storeBitsCount = $this->bitsPerCharacter;
@@ -194,7 +214,8 @@ class BaseN
         return $result;
     }
 
-    public function decode(string $encodedString) :string {
+    public function decode(string $encodedString): string
+    {
         if (!$encodedString) {
             return '';
         }
@@ -213,9 +234,9 @@ class BaseN
             $encodedString = rtrim($encodedString, $this->padCharacter);
         }
 
-        $lastIndex       = strlen($encodedString) - 1;
-        $rawString       = '';
-        $byte            = 0;
+        $lastIndex = strlen($encodedString) - 1;
+        $rawString = '';
+        $byte = 0;
         $bitsStoredCount = 0;
 
         for ($i = 0; $i <= $lastIndex; $i++) {
@@ -226,32 +247,32 @@ class BaseN
                 if (isset($this->alphabetMap[$charLower = strtolower($encodedString[$i])])) {
                     # store value to avoid further case changing
                     $this->alphabetMap[$encodedString[$i]] = $this->alphabetMap[$charLower];
-                }
-                else if (isset($this->alphabetMap[$charUpper = strtoupper($encodedString[$i])])) {
-                    $this->alphabetMap[$encodedString[$i]] = $this->alphabetMap[$charUpper];
+                } else {
+                    if (isset($this->alphabetMap[$charUpper = strtoupper($encodedString[$i])])) {
+                        $this->alphabetMap[$encodedString[$i]] = $this->alphabetMap[$charUpper];
+                    }
                 }
             }
 
             if (!isset($this->alphabetMap[$encodedString[$i]])) {
-                throw new \InvalidArgumentException("Unable to decode string, character ${encodedString[$i]} is out of alphabet");
+                throw new InvalidArgumentException("Unable to decode string, character $encodedString[$i] is out of alphabet");
             }
 
             $bitsRequired = 8 - $bitsStoredCount;
-            $bitsLeft     = $this->bitsPerCharacter - $bitsRequired;
+            $bitsLeft = $this->bitsPerCharacter - $bitsRequired;
 
             if ($bitsRequired > $this->bitsPerCharacter) {
                 # left shift bits if they're not enough to complete the byte
-                $bits            = $this->alphabetMap[$encodedString[$i]] << $bitsRequired - $this->bitsPerCharacter;
+                $bits = $this->alphabetMap[$encodedString[$i]] << $bitsRequired - $this->bitsPerCharacter;
                 $bitsStoredCount += $this->bitsPerCharacter;
-            }
-            else if ($i !== $lastIndex || $this->padFinalBits) {
-                # right shift bits if they're too much to complete the byte
-                $bits            = $this->alphabetMap[$encodedString[$i]] >> $bitsLeft;
-                $bitsStoredCount = 8;
-            }
-            else {
-                # final bits shouldn't be shifted
-                $bits            = $this->alphabetMap[$encodedString[$i]];
+            } else {
+                if ($i !== $lastIndex || $this->padFinalBits) {
+                    # right shift bits if they're too much to complete the byte
+                    $bits = $this->alphabetMap[$encodedString[$i]] >> $bitsLeft;
+                } else {
+                    # final bits shouldn't be shifted
+                    $bits = $this->alphabetMap[$encodedString[$i]];
+                }
                 $bitsStoredCount = 8;
             }
 
@@ -265,7 +286,7 @@ class BaseN
                 if ($i !== $lastIndex) {
                     # start the new byte
                     $bitsStoredCount = $bitsLeft;
-                    $byte            = ($this->alphabetMap[$encodedString[$i]] ^ ($bits << $bitsLeft)) << 8 - $bitsStoredCount;
+                    $byte = ($this->alphabetMap[$encodedString[$i]] ^ ($bits << $bitsLeft)) << 8 - $bitsStoredCount;
                 }
             }
         }
@@ -273,12 +294,13 @@ class BaseN
         return $rawString;
     }
 
-    private function divMod(array &$bytes, int $radixFrom, int $radixTo, int $start = 0) :int {
-        $size      = count($bytes);
+    private function divMod(array &$bytes, int $radixFrom, int $radixTo, int $start = 0): int
+    {
+        $size = count($bytes);
         $remainder = 0;
 
         for ($i = $start; $i < $size; $i++) {
-            $temp      = ($remainder * $radixFrom) + $bytes[$i];
+            $temp = ($remainder * $radixFrom) + $bytes[$i];
             $bytes[$i] = intdiv($temp, $radixTo);
             $remainder = $temp % $radixTo;
         }
@@ -286,11 +308,12 @@ class BaseN
         return $remainder;
     }
 
-    public function encodeRough(string $rawString) :string {
+    public function encodeRough(string $rawString): string
+    {
         $encodedString = '';
 
         $bytes = array_values(unpack("C*", $rawString));
-        $size  = count($bytes);
+        $size = count($bytes);
 
         for ($i = 0; $i < $size;) {
             $encodedString = $this->alphabet[$this->divMod($bytes, 256, $this->radix, $i)] . $encodedString;
@@ -303,7 +326,8 @@ class BaseN
         return $encodedString;
     }
 
-    public function decodeRough(string $encodedString) :string {
+    public function decodeRough(string $encodedString): string
+    {
         $rawStringBytes = [];
 
         # prepare alphabet map if it wasn't yet
@@ -311,7 +335,7 @@ class BaseN
             $this->alphabetMap = array_flip(str_split($this->alphabet));
         }
 
-        $size  = strlen($encodedString);
+        $size = strlen($encodedString);
         $bytes = [];
         for ($i = 0; $i < $size; $i++) {
             # if encoding is case insensitive and character wasn't found
@@ -321,14 +345,15 @@ class BaseN
                 if (isset($this->alphabetMap[$charLower = strtolower($encodedString[$i])])) {
                     # store value to avoid further case changing
                     $this->alphabetMap[$encodedString[$i]] = $this->alphabetMap[$charLower];
-                }
-                else if (isset($this->alphabetMap[$charUpper = strtoupper($encodedString[$i])])) {
-                    $this->alphabetMap[$encodedString[$i]] = $this->alphabetMap[$charUpper];
+                } else {
+                    if (isset($this->alphabetMap[$charUpper = strtoupper($encodedString[$i])])) {
+                        $this->alphabetMap[$encodedString[$i]] = $this->alphabetMap[$charUpper];
+                    }
                 }
             }
 
             if (!isset($this->alphabetMap[$encodedString[$i]])) {
-                throw new \InvalidArgumentException("Unable to decode string, character ${encodedString[$i]} is out of alphabet");
+                throw new InvalidArgumentException("Unable to decode string, character $encodedString[$i] is out of alphabet");
             }
 
             $bytes[] = $this->alphabetMap[$encodedString[$i]];
@@ -349,24 +374,26 @@ class BaseN
         return pack('C*', ...$rawStringBytes);
     }
 
-    public function encodeInt(int $int) :string {
+    public function encodeInt(int $int): string
+    {
         $encodedString = '';
 
         while ($int >= $this->radix) {
-            $left          = $int % $this->radix;
-            $int           = ($int - $left) / $this->radix;
+            $left = $int % $this->radix;
+            $int = ($int - $left) / $this->radix;
             $encodedString = $this->alphabet[$left] . $encodedString;
-        };
+        }
 
         return $this->alphabet[$int] . $encodedString;
     }
 
-    public function decodeInt(string $encodedInt) :int {
+    public function decodeInt(string $encodedInt): int
+    {
         if (!$this->alphabetMap) {
             $this->alphabetMap = array_flip(str_split($this->alphabet));
         }
 
-        $res  = 0;
+        $res = 0;
         $rank = $len = strlen($encodedInt) - 1;
 
         while ($rank >= 0) {

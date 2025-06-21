@@ -23,24 +23,27 @@
     </a>
 </p>
 
+## Credits
+This repository is a fork from original [xobotyi/basen](https://github.com/xobotyi/basen), because original repository is not maintained anymore.
+
 ## About
 PHP is a great language but unfortunately provides us with only one text encoding (base64) which even not URL safe. And there are no straight way to change its alphabet.  
 BaseN solves that problem and implements common binary-to-text algorithm for encodings whose alphabet fully covers number of bits that corresponds its length. And rough algorithm which will encode each byte separately, it is less compact but guarantee the encoding with given alphabet.  
 Furthermore it gives you methods to encode and decode integers themselves instead of their text representation.
 
 ## Requirements
-- [PHP](//php.net/) 7.1+
+- [PHP](//php.net/) 8.3+
 
 ## Installation
 Install with composer
 ```bash
-composer require xobotyi/basen
+composer require chongyi/php-basen
 ```
 
 ## Usage
 ```php
-use xobotyi\basen\BaseN;
-use xobotyi\basen\Base58;
+use PHPBaseN\BaseN;
+use PHPBaseN\Base58;
 
 // use it for something usual
 $base8 = new BaseN('01234567', false, false, false);

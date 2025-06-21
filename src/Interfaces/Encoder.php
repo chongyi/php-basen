@@ -5,11 +5,11 @@
  * @License: http://www.opensource.org/licenses/mit-license.php
  */
 
-namespace xobotyi\basen\Interfaces;
+namespace PHPBaseN\Interfaces;
 
 interface Encoder
 {
-    public static function encode(string $rawString) :string;
+    public static function encode(string $rawString): string;
 
-    public static function decode(string $encodedString) :string;
+    public static function decode(string $encodedString): string;
 }
