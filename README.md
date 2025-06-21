@@ -1,27 +1,11 @@
-<h1 align="center">BaseN</h1>
-<p align="center">
-    <a href="https://packagist.org/packages/xobotyi/basen">
-        <img alt="License" src="https://poser.pugx.org/xobotyi/basen/license" />
-    </a>
-    <a href="https://packagist.org/packages/xobotyi/basen">
-        <img alt="PHP 7 ready" src="http://php7ready.timesplinter.ch/xobotyi/basen/badge.svg" />
-    </a>
-    <a href="https://travis-ci.org/xobotyi/basen">
-        <img alt="Build Status" src="https://travis-ci.org/xobotyi/basen.svg?branch=master" />
-    </a>
-    <a href="https://www.codacy.com/app/xobotyi/basen">
-        <img alt="Codacy Grade" src="https://api.codacy.com/project/badge/Grade/4b87c746d8d14a70a1ac399c48fad64d" />
-    </a>
-    <a href="https://www.codacy.com/app/xobotyi/basen">
-        <img alt="Codacy Coverage" src="https://api.codacy.com/project/badge/Coverage/4b87c746d8d14a70a1ac399c48fad64d" />
-    </a>
-    <a href="https://packagist.org/packages/xobotyi/basen">
-        <img alt="Latest Stable Version" src="https://poser.pugx.org/xobotyi/basen/v/stable" />
-    </a>
-    <a href="https://packagist.org/packages/xobotyi/basen">
-        <img alt="Total Downloads" src="https://poser.pugx.org/xobotyi/basen/downloads" />
-    </a>
-</p>
+# PHPBaseN
+
+[![License](http://poser.pugx.org/chongyi/php-basen/license)](https://packagist.org/packages/chongyi/php-basen)
+[![Build Status](https://github.com/chongyi/php-basen/actions/workflows/ci.yml/badge.svg)](https://github.com/chongyi/php-basen/actions/workflows/ci.yml)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/408ab0faf6d64260bde1999bcd7ade0b)](https://app.codacy.com/gh/chongyi/php-basen/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/408ab0faf6d64260bde1999bcd7ade0b)](https://app.codacy.com/gh/chongyi/php-basen/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
+[![Latest Stable Version](http://poser.pugx.org/chongyi/php-basen/v)](https://packagist.org/packages/chongyi/php-basen)
+[![Total Downloads](http://poser.pugx.org/chongyi/php-basen/downloads)](https://packagist.org/packages/chongyi/php-basen)
 
 ## Credits
 This repository is a fork from original [xobotyi/basen](https://github.com/xobotyi/basen), because original repository is not maintained anymore.
