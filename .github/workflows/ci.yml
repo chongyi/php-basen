@@ -1,0 +1,53 @@
+name: PHP CI with Codacy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.3'] # 可扩展为 ['7.4', '8.0', '8.1', '8.2', '8.3']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+          tools: composer:v2
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            vendor
+            ~/.composer/cache
+          key: php-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+
+      - name: Update Composer
+        run: composer self-update
+
+      - name: Install dependencies
+        run: composer update --no-interaction --dev
+
+      - name: Run tests with coverage
+        run: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+
+      - name: Run tests without coverage
+        run: vendor/bin/phpunit
+
+      - name: Upload to Codacy
+        if: success() && matrix.php == '8.3' && github.ref == 'refs/heads/main'
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        run: |
+          curl -Ls https://coverage.codacy.com/get.sh > codacy-reporter
+          chmod +x codacy-reporter
+          ./codacy-reporter report -r build/logs/clover.xml
