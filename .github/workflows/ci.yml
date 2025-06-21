@@ -1,6 +1,7 @@
 name: PHP CI with Codacy
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
   pull_request:
