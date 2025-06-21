@@ -13,7 +13,7 @@ use PHPBaseN\BaseN;
 trait Encoder
 {
     /**
-     * @var BaseN
+     * @var BaseN|null
      */
     private static ?BaseN $converter = null;
 
@@ -30,7 +30,7 @@ trait Encoder
         return $alphabet;
     }
 
-    public static function encode(string $rawString, string $alphabet = null, bool $padding = null): string
+    public static function encode(string $rawString, ?string $alphabet = null, ?bool $padding = null): string
     {
         return self::getBaseConverter()
             ->setAlphabet(self::validateAlphabet($alphabet))
@@ -38,7 +38,7 @@ trait Encoder
             ->encode($rawString);
     }
 
-    public static function decode(string $encodedString, string $alphabet = null, bool $padding = null): string
+    public static function decode(string $encodedString, ?string $alphabet = null, ?bool $padding = null): string
     {
         return self::getBaseConverter()
             ->setAlphabet(self::validateAlphabet($alphabet))
@@ -46,14 +46,14 @@ trait Encoder
             ->decode($encodedString);
     }
 
-    public static function encodeInt(int $int, string $alphabet = null): string
+    public static function encodeInt(int $int, ?string $alphabet = null): string
     {
         return self::getBaseConverter()
             ->setAlphabet(self::validateAlphabet($alphabet))
             ->encodeInt($int);
     }
 
-    public static function decodeInt(string $encodedInt, string $alphabet = null): int
+    public static function decodeInt(string $encodedInt, ?string $alphabet = null): int
     {
         return self::getBaseConverter()
             ->setAlphabet(self::validateAlphabet($alphabet))
