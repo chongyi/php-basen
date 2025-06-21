@@ -1,5 +1,5 @@
 {
-  "name": "xobotyi/basen",
+  "name": "chongyi/php-basen",
   "description": "Text and integers encoding utilities for PHP with no extensions dependencies. Base32, Base58, Base64 and much more!",
   "type": "library",
   "keywords": [
@@ -15,14 +15,19 @@
     "base64"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/xobotyi/basen",
+  "homepage": "https://github.com/chongyi/php-basen",
   "support": {
-    "issues": "https://github.com/xobotyi/basen/issues"
+    "issues": "https://github.com/chongyi/php-basen/issues"
   },
   "authors": [
     {
       "name": "Anton Zinovyev",
       "email": "xog3@yandex.ru",
+      "role": "Developer"
+    },
+    {
+      "name": "Chongyi",
+      "email": "xpz3847878@163.com",
       "role": "Developer"
     }
   ],
